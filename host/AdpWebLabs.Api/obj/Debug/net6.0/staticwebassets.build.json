@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NRVf5xrqPSTtfizswUhLyib8IbCT9I3G4ia5lp4qYj8=",
+  "Source": "AdpWebLabs.Api",
+  "BasePath": "_content/AdpWebLabs.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
