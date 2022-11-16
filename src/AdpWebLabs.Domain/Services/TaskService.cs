@@ -1,57 +1,35 @@
 ﻿using AdpWebLabs.Domain.Domain.DTO;
+using AdpWebLabs.Domain.Domain.Entities;
+using AdpWebLabs.Domain.Domain.Enums;
+using AdpWebLabs.Domain.Infra.Data;
+using AdpWebLabs.Domain.Infra.Data.Repository.Interfaces;
 using AdpWebLabs.Domain.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
-using RestSharp;
-using System.Net;
-using System.Text.Json;
 
 namespace AdpWebLabs.Domain.Services
 {
     public class TaskService : ITaskService
     {
-        private readonly string _baseAdpApiUrl;
+        private readonly ITaskContext _taskContext;
+        private readonly ICalculatorRepository _calculatorRepository;
 
-        const string getTaskUrl = "/api/v1/get-task";
-        const string submitTaskUrl = "api/v1/submit-task";
-
-        public TaskService(IConfiguration configuration) => _baseAdpApiUrl = configuration.GetSection("URL:adpeai").Value;
-
-        public async Task<TaskResponse> GetTask()
+        public TaskService(ITaskContext taskContext, ICalculatorRepository calculatorRepository)
         {
-            try
-            {
-                var client = new RestClient(_baseAdpApiUrl);
-                var request = new RestRequest(getTaskUrl, Method.Get);
-
-                var taskResult = await client.GetAsync<TaskResponse>(request);
-
-                return taskResult ?? new TaskResponse();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("An error occurred while trying to get a task");
-            }
+            this._taskContext = taskContext;
+            _calculatorRepository = calculatorRepository;
         }
 
-        public async Task<HttpStatusCode> SubmitTask(TaskRequest taskRequest)
+        public async Task<KeyValuePair<int, object>> Calculate()
         {
-            try
-            {
-                var client = new RestClient(_baseAdpApiUrl);
+            var task = await _taskContext.GetTask();
 
-                var request = new RestRequest(submitTaskUrl, Method.Post);
-                request.AddJsonBody(JsonSerializer.Serialize(taskRequest));
+            Operation operation = (Operation)Enum.Parse(typeof(Operation), task.Operation?.ToUpper() ?? string.Empty);
+            var calculator = new Calculator(task.Left, task.Right, operation);
 
-                var taskResult = await client.PostAsync(request);
+            await _calculatorRepository.SaveAsync(calculator);
 
-                return taskResult.StatusCode;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("An error occurred while trying to submit a task");
-            }
+            var submitResult = await _taskContext.SubmitTask(new TaskSubmitRequest(task.Id, calculator.Result));
+
+            return submitResult;
         }
     }
 }

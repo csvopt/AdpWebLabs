@@ -6,12 +6,12 @@ namespace AdpWebLabs.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CalculationController : CustomReturnController
+    public class TaskController : CustomReturnController
     {
-        private readonly ICalculationService _calculationService;
-        private readonly ILogger<CalculationController> _logger;
+        private readonly ITaskService _calculationService;
+        private readonly ILogger<TaskController> _logger;
 
-        public CalculationController(ICalculationService calculationService, ILogger<CalculationController> logger)
+        public TaskController(ITaskService calculationService, ILogger<TaskController> logger)
         {
             _calculationService = calculationService;
             _logger = logger;
@@ -28,7 +28,9 @@ namespace AdpWebLabs.Api.Controllers
             try
             {
                 var result = await _calculationService.Calculate();
-                return ResultHandler(result);
+
+                var a = ResultHandler(result.Key, result.Value);
+                return ResultHandler(result.Key, result.Value);
             }
             catch (Exception ex)
             {

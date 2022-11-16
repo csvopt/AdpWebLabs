@@ -2,9 +2,9 @@
 
 namespace AdpWebLabs.Domain.Domain.DTO
 {
-    public class TaskRequest
+    public class TaskSubmitRequest
     {
-        public TaskRequest(Guid id, double result)
+        public TaskSubmitRequest(Guid id, double result)
         {
             Id = id;
             Result = result;

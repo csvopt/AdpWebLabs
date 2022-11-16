@@ -2,7 +2,7 @@
 
 namespace AdpWebLabs.Domain.Domain.DTO
 {
-    public class TaskResponse
+    public class TaskGetResponse
     {
         [JsonPropertyName("id")]
         public Guid Id { get; set; }

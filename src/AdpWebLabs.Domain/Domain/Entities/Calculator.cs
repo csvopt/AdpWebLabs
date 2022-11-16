@@ -1,36 +1,39 @@
-﻿using AdpWebLabs.Domain.Domain.Enums;
+﻿using AdpWebLabs.Domain.Domain.Entities.Base;
+using AdpWebLabs.Domain.Domain.Enums;
 
 namespace AdpWebLabs.Domain.Domain.Entities
 {
-    public class Calculator
+    public class Calculator : Entity
     {
-        private readonly double _left;
-        private readonly double _right;
-        private readonly Operation _operation;
         private double _result;
+
+        public Calculator() {}
 
         public Calculator(double left, double right, Operation operation)
         {
-            this._left = left;
-            this._right = right;
-            this._operation = operation;
+            this.Left = left;
+            this.Right = right;
+            this.Operation = operation;
         }
 
+        public double Left { get; private set; }
+        public double Right { get; private set; }
+        public Operation Operation { get; private set; }
         public double Result
         {
-            get { return Calculate(_operation); }
-            private set { _result = value; }
+            get { return Calculate(Operation); }
+            private set => _result = value;
         }
 
         private double Calculate(Operation operation)
         {
             return operation switch
             {
-                Operation.ADDITION => _result = _left + _right,
-                Operation.DIVISION => _result = _left / _right,
-                Operation.MULTIPLICATION => _result = _left * _right,
-                Operation.SUBTRACTION => _result = _left - _right,
-                Operation.REMAINDER => _result = _left % _right,
+                Operation.ADDITION => _result = Left + Right,
+                Operation.DIVISION => _result = Left / Right,
+                Operation.MULTIPLICATION => _result = Left * Right,
+                Operation.SUBTRACTION => _result = Left - Right,
+                Operation.REMAINDER => _result = Left % Right,
                 _ => _result,
             };
         }
